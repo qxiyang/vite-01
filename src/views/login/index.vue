@@ -10,6 +10,7 @@
           <el-link type="primary" @click="handleChange">{{ formType ? '登录' : '注册' }}</el-link><!--使用el-link组件完成超链接效果-->
         </div>
         <el-form 
+        :rules="rule"
         :model="loginForm" 
         class="demo-ruleForm"
         style="max-width: 600px;">
@@ -26,15 +27,21 @@
             </template>
           </el-input>
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :style="{width:'100%'}" @click="submitForm">
+            {{ formType ? '注册' : '登录' }}
+          </el-button>
+        </el-form-item>
         </el-form>
       </el-card>
     </el-row>
 </template>
 
 <script setup>
+import { UserFilled, Lock } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import { fa, tr } from 'element-plus/es/locales.mjs';
 import { ref,reactive } from 'vue';
+import { getCode } from '../../api';
 const imgUrl = new URL('../../public/login-head.png', import.meta.url).href
 //0登录，1注册
 const  formType = ref(0)
@@ -50,12 +57,46 @@ const countDown = reactive({
   text :"验证码",
   time :60
 })
+//指定规则
+const validateUser = (rule,value,callback)=>{
+  if(value===''){
+    callback(new Error("请输入账号"))
+  }else{
+    //账号正则 
+    const userReg = /^1(3[0-9]|4[01456789]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
+    userReg.test(value) ? callback() : callback("手机号格式不对")
+  }
+}
+const validatePass = (rule,value,callback)=>{
+  if(value===''){
+    callback(new Error("请输入密码"))
+  }else{
+    //密码正则 
+    const passReg = /^[a-zA-Z0-9_-]{4,16}$/
+    passReg.test(value) ? callback() : callback(new Error("请输入4到16位含字母及字符的密码"))
+}
+}
+// const validateValid = (rule,value,callback)=>{
+//   if(value===''){
+//     callback(new Error("请输入密码"))
+//   }else{
+//     value===k ? callback() : callback(new Error("验证码错误"))
+//   }
+// }
+const submitForm = ()=>{
+
+}
+const rule = reactive({
+  userName:[{validator:validateUser,trigger:'blur'}],
+  passWord:[{validator:validatePass,trigger:'blur'}],
+  // validCode:[{validator:validateValidcode,trigger:'blur'}]
+})
 let flag = false
 const countDownChange = ()=>{
   //如果已经点击了发送验证码就不能再带点击
   if(flag)return
   //创建正则实例
-  const phoneReg = /^1(3[0-9]|4[01456789]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}&/ 
+  const phoneReg = /^1(3[0-9]|4[01456789]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/ 
   //用正则判断手机号是否正确
   if(!loginForm.userName||!phoneReg.test(loginForm.userName)){
     console.log("用户名或密码不正确,请确认后再输入")//控制台有输出但是页面没有弹窗
@@ -66,16 +107,20 @@ const countDownChange = ()=>{
   }
   //倒计时
   setInterval(()=>{
-    if (countDow.time<=0){
-        countDow.text = "请再次发送"
-        countDow.time = 60
+    if (countDown.time<=0){
+        countDown.text = "请再次发送"
+        countDown.time = 60
         flag = false
+        // clearInterval(timer)
   }else{
-        countDow.time -=0
-        countDow.text = "还有&{countDow.time}s"
+        countDown.time -=1
+        countDown.text = `还有${countDown.time}s`//模板字符串
   }
   },1000)//1s执行一次
   flag = true
+  getCode({tel:loginForm.userName}).then(({data})=>{
+    console.log('data',data)
+  })
 }
 </script>
 
