@@ -6,8 +6,18 @@ import store from './store'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+//调用路由守卫
+router.beforeEach((to,form)=>{
+    const token = localStorage.getItem('pz_token')
+    //非登录页面并且token不存在
+    if(!token&&!to.path == '/login') return '/login'
+    //token存在时访问login
+    if(token&&to.path === '/login') return '/'
+    return true
+
+})
 const app = createApp(App)
-for(const [key,component] of Object.entries(ElementPlusIconsVue)){
+for(const [key,component] of Object.entries(ElementPlusIconsVue)){//vuex配置
     app.component(key,component)
 }
   

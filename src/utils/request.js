@@ -17,7 +17,7 @@ http.interceptors.request.use(function (config) {
     if(!white.includes(config.url)&&token){//如果不是白名单发起了token
       config.headers['x-token'] = token//待修改,个人认为应该用()视频用的[]-----属性为对象，js中用.和[]访问对象属性
     }
-    isArray(config.headers) ? console.log("array"): console.log(typeof(config.headers))
+    // isArray(config.headers) ? console.log("array"): console.log(typeof(config.headers))
     return config;
   }, function (error) {
     // 对请求错误做些什么
@@ -31,6 +31,13 @@ http.interceptors.response.use(function (response) {
     if(response.data.code === -1){
       ElMessage.warning(response.data.message)
     }
+    //token错误
+    if(response.data.code === -2){
+      ElMessage.warning(response.data.message)
+      localStorage.removeItem('pz_useInfo')//清除用户信息
+      localStorage.removeItem('pz_token')//清除token
+      window.location.href = window.location.origin//回到原页面
+  }
     return response;
   }, function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。

@@ -10,6 +10,7 @@
           <el-link type="primary" @click="handleChange">{{ formType ? '登录' : '注册' }}</el-link><!--使用el-link组件完成超链接效果-->
         </div>
         <el-form 
+        ref="loginFormRef" 
         :rules="rule"
         :model="loginForm" 
         class="demo-ruleForm"
@@ -28,7 +29,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :style="{width:'100%'}" @click="submitForm">
+          <el-button type="primary" :style="{width:'100%'}" @click="submitForm(loginFormRef)">
             {{ formType ? '注册' : '登录' }}
           </el-button>
         </el-form-item>
@@ -41,7 +42,9 @@
 import { UserFilled, Lock } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { ref,reactive } from 'vue';
-import { getCode } from '../../api';
+import { getCode,userAuthentication,login } from '../../api';
+import { useRouter } from 'vue-router';
+
 const imgUrl = new URL('../../public/login-head.png', import.meta.url).href
 //0登录，1注册
 const  formType = ref(0)
@@ -83,8 +86,36 @@ const validatePass = (rule,value,callback)=>{
 //     value===k ? callback() : callback(new Error("验证码错误"))
 //   }
 // }
-const submitForm = ()=>{
-
+const loginFormRef = ref()
+const router = useRouter()
+const submitForm = async(formEl) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log(loginFormRef,'submit!')
+      if(formType.value){
+        userAuthentication(loginForm).then(({data})=>{
+          if(data.code === 10000){// code是后端约定的「业务状态码」
+            ElMessage.success("注册成功,请登录")
+            formType.value = 1
+            router.push('/')
+          }
+        })
+      }else{
+        login(loginForm).then(({data})=>{
+          if(data.code === 10000){
+            ElMessage.success("登录成功")
+            //将用户信息和token保存到浏览器缓存里
+            localStorage.setItem('pz_token',data.data.token)
+            localStorage.setItem('pz_userInfo',JSON.stringify(data.data.userInfo))
+            router.push('/')
+          }
+        })
+      }
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
 }
 const rule = reactive({
   userName:[{validator:validateUser,trigger:'blur'}],
@@ -106,12 +137,12 @@ const countDownChange = ()=>{
     })
   }
   //倒计时
-  setInterval(()=>{
+  const timer = setInterval(()=>{
     if (countDown.time<=0){
         countDown.text = "请再次发送"
         countDown.time = 60
         flag = false
-        // clearInterval(timer)
+        clearInterval(timer)
   }else{
         countDown.time -=1
         countDown.text = `还有${countDown.time}s`//模板字符串
@@ -119,7 +150,9 @@ const countDownChange = ()=>{
   },1000)//1s执行一次
   flag = true
   getCode({tel:loginForm.userName}).then(({data})=>{
-    console.log('data',data)
+    if(data.code === 10000){
+      ElMessage.success('发送成功')
+    }
   })
 }
 </script>
