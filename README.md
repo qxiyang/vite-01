@@ -22,29 +22,35 @@ UI 组件库：Vant 4（移动端专用 UI 组件，如弹窗、按钮、图片�
 支持「全部订单」入口，查看用户所有订单数据。
 4. 时间格式化
 封装时间戳转换工具函数，实现时间戳到「年 - 月 - 日 时：分」格式的转换，解决日期补零与格式统一问题。
-快速启动
+# 快速启动
 环境要求
 Node.js ≥ 16.0.0
-npm/yarn/pnpm 包管理工具
+npm包管理工具
 启动步骤
 克隆项目
 bash
 运行
+```plaintext
 git clone [项目仓库地址]
 cd [项目文件夹名]
+```
 安装依赖
 bash
 运行
+```plaintext
 npm install
-# 或 yarn install
-# 或 pnpm install
+``
 本地开发
 bash
 运行
+```plaintext
 npm run dev
+```
 启动后访问终端输出的本地地址（默认 http://127.0.0.1:5173），即可预览项目。
 打包构建
 bash
 运行
+```plaintext
 npm run build
+```
 打包产物输出至 dist 目录，可部署至静态服务器或后端服务中。
