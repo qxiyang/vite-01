@@ -45,7 +45,7 @@ const onSubmit = async() => {
     const {data} = await proxy.$api.login(form)//不使用then的写法
     if(data.code === 10000){
         localStorage.setItem('h5_token',data.data.token)//将token存储在浏览器缓存
-        localStorage.setItem('h5-userInfo',JSON.stringify(data.data.userInfo))
+        localStorage.setItem('h5_userInfo',JSON.stringify(data.data.userInfo))
         router.push('/home')
     }
 }

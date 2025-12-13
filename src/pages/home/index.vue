@@ -11,24 +11,78 @@
             @search="onSearch"
             />
     </div>
-    <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="item in homeData.img"></van-swipe-item>
+    <van-swipe class="my-swipe" height="170px" :autoplay="3000" indicator-color="white">
+        <van-swipe-item v-for="item in homeData.slides"
+        :key="item.id">
+            <van-image
+                radius="5"
+                :src="item.pic_image_url"
+            />
+        </van-swipe-item>
     </van-swipe>
+    <van-row justify="space-around">
+      <van-col v-for="(item,index) in homeData.nav2s"
+      span="11" 
+      class="center-img"
+      :key="item.id"
+      @click="goOrderTwo(index)"
+      >
+        <van-image 
+          :src="item.pic_image_url"
+        />
+      </van-col>
+    </van-row>
+    <van-row v-for="item in homeData.hospitals" 
+        class="hosptial-list"
+        :key="item.id"
+        justify="space-around"
+        @click="goOrder(item)"
+      >
+      <van-col span="6">
+        <van-image height="100" width="90" :src="item.avatar_url" />
+      </van-col>
+      <van-col class="hosptial" span="15">
+          <div class="hosptial-name">{{ item.name }}</div>
+          <div class="hosptial-type">
+            {{ item.label }}
+            &nbsp
+            {{ item.rank }}
+          </div>
+          <div class="hosptial-text">{{ item.intro }}</div>
+      </van-col>
+    </van-row>
 </template>
 <script setup>
+import { Slider } from 'vant'
 import { ref,getCurrentInstance, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
 const searchValue = ref('')
+const router = useRouter()
 const {proxy} = getCurrentInstance()
 const homeData = reactive({
     hospitals:[],
+    nav2s:[],
+    navs:[],
+    now:'',
+    slides:[]
 })
 onMounted( async () => {
-    const res = await proxy.$api.Indexindex()
-    Object.assign(res,)
-    console.log(res)//查看控制台
+    const {data} = await proxy.$api.index()
+    Object.assign(homeData,data.data)
+    console.log(homeData)//查看控制台
 })
+const goOrderTwo = (index) => {
+  router.push(`/createOrder?id=${homeData.nav2s[index].id}`)
+}
+const goOrder = (data) => {
+  router.push(`/createOrder?id=${data.id}`)
+}
 </script>
 <style lang="less" scoped>
+  .flex-bos{
+    display: flex;
+  }
     .header {
     display: flex;
     justify-content: space-between;
@@ -44,28 +98,28 @@ onMounted( async () => {
       color: #666666;
     }
   }
-  .my-swiper {
+  .my-swipe {
     margin: 5px;
   }
-  .yy-list {
+  .hosptial-list {
     padding-bottom: 10px;
     margin: 20px 0;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.04), 0 1px 6px 0 rgba(0, 0, 0, 0.04);
-    .yy {
-      .yy-name {
+    .hosptial {
+      .hosptial-name {
         font-size: 20px;
         line-height: 30px;
         font-weight: bold;
       }
-      .yy-type {
+      .hosptial-type {
         font-weight: bold;
         line-height: 25px;
         font-size: 15px;
         color: #0ca7ae;
       }
-      .yy-text {
+      .hosptial-text {
         font-size: 14px;
         color: #999999;
       }
