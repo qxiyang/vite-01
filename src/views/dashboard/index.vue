@@ -1,5 +1,5 @@
 <template>
-      dashboard
+      <PanelHead />
       <RouterView />
 </template>
 

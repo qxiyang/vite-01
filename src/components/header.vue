@@ -20,7 +20,7 @@
       <el-dropdown @command="handleClick"><!--在这里使用click不生效，所以采用@command-->
         <el-button class="el-dropdown-link flex-box">
             <el-avatar 
-              src="userInfo.avatar">
+              :src="userInfo.avatar">
             </el-avatar>
             <p class="username">{{ userInfo.name }}</p>
         </el-button>

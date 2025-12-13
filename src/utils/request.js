@@ -1,6 +1,5 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { isArray } from "element-plus/es/utils/types.mjs";
 
 const http = axios.create({
   baseURL: 'https://v3pz.itndedu.com/v3pz',

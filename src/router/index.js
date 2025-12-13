@@ -24,8 +24,8 @@ const routes = [
                 }else{//无子菜单的情况
                     return SON.parse(localData).menu.routerList[0].meta.path
                 }
-            }else{//无缓存的情况
-                return '/'
+            }else{//无缓存的情况,跳转到登录
+                return '/login'
             }   
         },
         //在完成动态路由后就不需要写死的

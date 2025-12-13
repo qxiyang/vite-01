@@ -27,7 +27,7 @@ const mutations ={//更改 Vuex 的 store 中的状态的唯一方法是提交 m
     dynamicMenu (state,payload){
         //通过glob导入文件
         const modules = import.meta.glob('../views/**/**/*.vue')//拿到views文件夹下面的所以二级目录的所有vue文件
-        console.log(modules)
+        // console.log(modules)
         //用modules拼接成完整的路由
         function routerSet(router) {//定义函数，router只是形参
             router.forEach( route => {

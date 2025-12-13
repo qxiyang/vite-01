@@ -117,7 +117,7 @@ const submitForm = async(formEl) => {
               console.log('routerList',routerList)
               //toRaw将响应式数据routerList转变为普通数据
               toRaw(routerList.value).forEach(item => {//遍历数据
-                router.addRoute('main',item)//将ite添加到main里面
+                router.addRoute('main',item)//将item添加到main里面
               })
               router.push('/')
             })
